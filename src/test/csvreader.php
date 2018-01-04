@@ -18,14 +18,14 @@ include_once "src/csv/CsvReader.class.php";
 include_once "src/csv/CsvRecordParser.class.php";
 include_once "src/xml/Csv2XmlWriter.class.php";
 
-$testfile = "./samples/10915-57949";
+$testfile = "./samples/TEyET_full";
 
 $reader = new CsvReader();
 $reader->open_file($testfile.".csv");
 $current = 0;
 echo "---------Let's start-------\r\n";
 $xml = new Csv2XmlWriter();
-while ($record = $reader->next_record() ) {
+while ( ($record = $reader->next_record() ) && ($current < 1000) ){
 
   $parser = new CsvRecordParser($record);
   $current++;
@@ -35,7 +35,8 @@ while ($record = $reader->next_record() ) {
 
 }
 $size= $xml->getXML($testfile.'.xml');
+$issues_size = $xml->getIssuesXML($testfile.'_issues.xml');
 
-echo "\r\n---------Ended with $size bytes--------\r\n";
+echo "\r\n---------Ended with $size bytes (+ $issues_size bytes)--------\r\n";
 
 ?>

@@ -15,32 +15,55 @@ class Csv2XmlWriter {
   private $document;
   private $articles;
   private $article_count;
+  private $issue_array;
+  private $issue_document;
+  private $issues;
 
   public function __construct() {
     $this->article_count = 0;
-    $this->document = new DOMDocument( "1.0", "UTF-8" );
+    $this->issue_array = array();
 
+    $this->document = new DOMDocument( "1.0", "UTF-8" );
     $this->articles = $this->createElement("articles", array(
       "xmlns"=>"http://pkp.sfu.ca",
       "xmlns:xsi"=>"http://www.w3.org/2001/XMLSchema-instance",
       "xsi:schemaLocation"=>"http://pkp.sfu.ca native.xsd"
     ));
     $this->document->appendChild($this->articles);
+
+    $this->issue_document = new DOMDocument( "1.0", "UTF-8" );
+    $this->issues = $this->createElement("issues", array(
+      "xmlns"=>"http://pkp.sfu.ca",
+      "xmlns:xsi"=>"http://www.w3.org/2001/XMLSchema-instance",
+      "xsi:schemaLocation"=>"http://pkp.sfu.ca native.xsd"
+    ),null,$this->issue_document);
+    $this->issue_document->appendChild($this->issues);
   }
 
  /**
  * Ends the XML document. If $filename is provided, saves the result in the there. Otherwise, returns the XML string
  */
-  public function getXML($filename=null) {
-    $this->document->formatOutput = true;
+  private function getXMLfromDocument($filename=null,$document) {
+    $document->formatOutput = true;
     if ($filename)
-      return $this->document->save($filename);
+      return $document->save($filename);
     else
-      return $this->document->saveXML();
+      return $document->saveXML();
   }
 
- private function createElement($tag,$attributes_array, $value=null) {
-   $element = $this->document->createElement($tag,$value);
+  public function getXML($filename=null) {
+    return $this->getXMLfromDocument($filename,$this->document);
+  }
+
+  public function getIssuesXML($filename=null) {
+    return $this->getXMLfromDocument($filename,$this->issue_document);
+  }
+
+ private function createElement($tag,$attributes_array, $value=null,$document = null) {
+   if (!$document)
+     $document = $this->document;
+
+   $element = $document->createElement($tag,$value);
    foreach ($attributes_array as $key => $value)
      $element->setAttribute($key,$value);
    return $element;
@@ -64,10 +87,10 @@ class Csv2XmlWriter {
     $this->addKeywords($article,$csvParser->getLocalizedKeywords());
     $this->addAuthors($article, $csvParser->getAuthors());
     $this->addSubmissionFile($article,$csvParser);
-  //  $this->addPages($article,$csvParser->getLocalizedPages());
-  //  $this->addIssue($article,$csvParser->getLocalizedIssue());
+    $this->addPages($article,$csvParser->getLocalizedPages());
     $this->articles->appendChild( $article );
 
+    $this->addIssue($csvParser->getLocalizedIssue());
   }
 
   private function addLocalizedMetadata($article,$metadata,$localizedMetadataValues) {
@@ -82,14 +105,25 @@ class Csv2XmlWriter {
       $article->appendChild( $this->createElement('pages',array(),$pages));
   }
 
-  private function addIssue($article,$localizedIssue) {
+  private function issueExists($issue) {
+    return in_array($issue,$this->issue_array);
+  }
+  private function addIssue($localizedIssue) {
     $issue = $localizedIssue[Utils::$default_lang];
-    $issue_id = $this->createElement('issue_identification',array() );
-    $issue_id->appendChild( $this->createElement('volume',array(),$issue) );
-    $issue_id->appendChild( $this->createElement('number',array()) );
-    $issue_id->appendChild( $this->createElement('year',array()) );
+    if ($this->issueExists($issue))
+      return;
 
-    $article->appendChild($issue_id);
+    $this->issue_array[] = $issue; //new issue registered
+    
+    $issue_id = $this->createElement('issue_identification',array(),null,$this->issue_document);
+
+    $issue_id->appendChild( $this->createElement('volume',array(),$issue,$this->issue_document) ); //FIXME should parse $issue data
+    $issue_id->appendChild( $this->createElement('number',array(),null,$this->issue_document) );
+    $issue_id->appendChild( $this->createElement('year',array(),null,$this->issue_document) );
+
+    $issue_node = $this->createElement('issue',array('published'=>'1', 'current'=>'0', 'access_status'=>1),null,$this->issue_document);
+    $issue_node->appendChild($issue_id);
+    $this->issues->appendChild($issue_node);
   }
 
   private function addKeywords($article,$localizedKeywords) {

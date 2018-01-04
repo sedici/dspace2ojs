@@ -85,7 +85,13 @@ class CsvRecordParser {
       public function getDateIssued() { return $this->getValue("ISSUED_DATE"); }
       public function getLocalizedTitle() { return $this->getLocalizedMetadata("TITLE");  }
       public function getLocalizedAbstract() { return $this->getLocalizedMetadata("ABSTRACT"); }
-      public function getUri() { return $this->getValue('URI'); }
+      public function getUri() {
+        $uri = $this->getValue('URI');
+        if (is_empty($uri)) {
+          $uri = $this->getLocalizedMetadata('URI')[$this->default_lang];
+        }
+          return $uri;
+       }
       public function getLocalizedPages() { return $this->getLocalizedMetadata('PAGES'); }
       public function getLocalizedIssue() { return $this->getLocalizedMetadata('ISSUE'); }
       public function hasFulltext() {
