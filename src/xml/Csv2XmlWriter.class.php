@@ -6,8 +6,10 @@ class Csv2XmlWriter {
 
   private $document;
   private $articles;
+  private $article_count;
 
   public function __construct() {
+    $this->article_count = 0;
     $this->document = new DOMDocument( "1.0", "UTF-8" );
 
     $this->articles = $this->createElement("articles", array(
@@ -40,20 +42,21 @@ class Csv2XmlWriter {
   * Transforms a parsed CSV record into an XML node
   */
   public function csv2xmlArticle($csvParser) {
+    $this->article_count++;
     $article = $this->createElement('article', array(
       "xmlns:xsi"=>"http://www.w3.org/2001/XMLSchema-instance",
       'locale' => Utils::getLocale($csvParser->getLanguage()),
-      'date_published' => Utils::safeDate ($csvParser->getDateIssued()),
+      //'date_published' => Utils::safeDate ($csvParser->getDateIssued()),
       'stage'=>"production",
-      'section_ref'=>'ART' )
+      'section_ref'=>'ART' )  //FIXME allow different sections
     );
 
     $this->addLocalizedMetadata($article,'title',$csvParser->getLocalizedTitle());
     $this->addLocalizedMetadata($article,'abstract',$csvParser->getLocalizedAbstract());
     $this->addKeywords($article,$csvParser->getLocalizedKeywords());
     $this->addAuthors($article, $csvParser->getAuthors());
-  //  $this->addSubmissionFile($article,$csvParser);
-    $this->addPages($article,$csvParser->getLocalizedPages());
+    $this->addSubmissionFile($article,$csvParser);
+  //  $this->addPages($article,$csvParser->getLocalizedPages());
   //  $this->addIssue($article,$csvParser->getLocalizedIssue());
     $this->articles->appendChild( $article );
 
@@ -99,8 +102,7 @@ class Csv2XmlWriter {
     foreach ($authors as $author_data) {
         $author_node = $this->createElement('author', array(
           "primary_contact"=>"true",
-          "include_in_browse"=>"true",
-          "user_group_ref"=>"Autor")
+          "user_group_ref"=>"Author")
         );
         foreach ($author_data as $key => $value)
           $author_node->appendChild( $this->createElement($key,array(),$value));
@@ -111,7 +113,7 @@ class Csv2XmlWriter {
   }
 
 
-  public function addSubmissionFile($article,$csvParser) {
+  public function addSubmissionFile($article,$csvParser, $includeGalley=false) {
 
     if (!$csvParser->hasFulltext())
       return; //no file to be added
@@ -123,18 +125,20 @@ class Csv2XmlWriter {
     $submission = $this->createElement('submission_file', array(
       "xmlns:xsi"=>"http://www.w3.org/2001/XMLSchema-instance",
       "xsi:schemaLocation"=>"http://pkp.sfu.ca native.xsd",
-      "stage"=>"submission"
+      "stage"=>"production_ready",
+      "id"=>$this->article_count
     ));
    $filesize = ($filedata) ? strlen($filedata) : 0;
 
     $revision = $this->createElement('revision', array(
-      'number'=>'1',
-      'genre' => 'Article',
+      'number'=>$this->article_count,
+  //    'genre' => 'SUBMISSION',
       'viewable' => 'true',
       'filetype'=>"application/pdf",
-      'user_group_ref'=>"Autor",
+      'user_group_ref'=>"Author",
       'filename' => $filename,
-      'filesize' => $filesize
+      'filesize' => $filesize,
+      'uploader' => 'admin'
     ));
 
     $revision->appendChild( $this->createElement('name', array(
@@ -145,17 +149,18 @@ class Csv2XmlWriter {
     $submission->appendChild( $revision );
     $article->appendChild( $submission );
 
-    $galley = $this->createElement('article_galley', array(
-      "xmlns:xsi"=>"http://www.w3.org/2001/XMLSchema-instance",
-      "xsi:schemaLocation"=>"http://pkp.sfu.ca native.xsd",
-      "approved"=>"true"));
-    $galley->appendChild($this->createElement('name',array('locale'=>Utils::getLocale($locale)),'PDF'));
+   if ($includeGalley) {
+      $galley = $this->createElement('article_galley', array(
+        "xmlns:xsi"=>"http://www.w3.org/2001/XMLSchema-instance",
+        "xsi:schemaLocation"=>"http://pkp.sfu.ca native.xsd",
+        "approved"=>"true"));
+      $galley->appendChild($this->createElement('name',array('locale'=>Utils::getLocale($locale)),'PDF'));
 
-    $galley->appendChild($this->createElement('seq',array(),'1'));
-    $galley->appendChild($this->createElement('submission_file_ref',array()));
+      $galley->appendChild($this->createElement('seq',array(),'1'));
+      $galley->appendChild($this->createElement('submission_file_ref',array()));
 
-    //$article->appendChild($galley);
-
+      $article->appendChild($galley);
+    }
   }
 }
 
