@@ -1,9 +1,17 @@
 <?php
-  include_once 'src/xml/HtmlParser.class.php';
-/**
-Parses data from one single record extracted from a CSV file
 
+/**
+* Parses metadata from one single record extracted from a CSV file
+* Currently supports only SEDICI UNLP metadata schema.
+*
+* @author gonetil
+* @url http://sedici.unlp.edu.ar
+* Licence GPLv3
+*
 */
+
+  include_once 'src/xml/HtmlParser.class.php';
+  include_once 'src/helpers/Mappings.class.php';
 
 class CsvRecordParser {
 
@@ -16,17 +24,15 @@ class CsvRecordParser {
           $this->data = $record;
       }
 
-      private function getValue($key) {
-        if (isset($this->data[$key]))
-          return $this->data[$key];
-        else
-          return false;
+      private function getValue($key, $lang=null) {
+        $key = Mappings::get($key) . ($lang ? "[$lang]" : ""); //fetches the real key
+        return (isset($this->data[$key])) ? $this->data[$key] : false;
       }
 
       private function getLocalizedMetadata($key) {
         $metadata = array();
         foreach ($this->languages as $lang) {
-            if ($datum = $this->getValue($key."[".$lang."]"))
+            if ($datum = $this->getValue($key,$lang))
               $metadata[$lang] = $datum;
         }
         return $metadata;
@@ -72,23 +78,27 @@ class CsvRecordParser {
       */
       public function getLanguage()
       {
-        $lang = $this->getLocalizedMetadata("dc.language");
+        $lang = $this->getLocalizedMetadata("LANGUAGE");
         return (isset($lang[$this->default_lang])) ? $lang[$this->default_lang] : $this->default_lang;
       }
 
-      public function getDateIssued() { return $this->getValue("dc.date.issued"); }
-      public function getLocalizedTitle() { return $this->getLocalizedMetadata("dc.title");  }
-      public function getLocalizedAbstract() { return $this->getLocalizedMetadata("dc.description.abstract"); }
-      public function getUri() { return $this->getValue('dc.identifier.uri'); }
-      public function getLocalizedPages() { return $this->getLocalizedMetadata('dc.format.extent'); }
-      public function getLocalizedIssue() { return $this->getLocalizedMetadata('sedici.relation.journalVolumeAndIssue'); }
+      public function getDateIssued() { return $this->getValue("ISSUED_DATE"); }
+      public function getLocalizedTitle() { return $this->getLocalizedMetadata("TITLE");  }
+      public function getLocalizedAbstract() { return $this->getLocalizedMetadata("ABSTRACT"); }
+      public function getUri() { return $this->getValue('URI'); }
+      public function getLocalizedPages() { return $this->getLocalizedMetadata('PAGES'); }
+      public function getLocalizedIssue() { return $this->getLocalizedMetadata('ISSUE'); }
       public function hasFulltext() {
-        $fulltextMetadata = $this->getLocalizedMetadata('sedici.description.fulltext');
+        $fulltextMetadata = $this->getLocalizedMetadata('FULLTEXT');
         return ($fulltextMetadata[$this->default_lang] == 'true');
       }
 
       public function getFulltextUri() {
-        $htmParser = new HtmlParser($this->getValue('dc.identifier.uri'));
+        $htmParser = new HtmlParser(
+          $this->getValue('URI'),
+          Mappings::get('HTML_URI_TAG_XPATH_SELECTOR'),
+          Mappings::get('HTML_URI_ATTRIBUTE')
+        );
         return $htmParser->getFileUri();
       }
 
@@ -100,14 +110,14 @@ class CsvRecordParser {
       }
 
       public function getLocalizedKeywords($callback=null) {
-        $keywords = $this->getLocalizedMetadata("sedici.subject.other");
+        $keywords = $this->getLocalizedMetadata("KEYWORDS");
         return $this->splitLocalizedMultivariate($keywords,$callback);
       }
 
       public function getAuthors() {
 
         $authors = $this->splitLocalizedMultivariate (
-            $this->getLocalizedMetadata("sedici.creator.person"),
+            $this->getLocalizedMetadata("PERSON"),
             array($this,'authorStringToArray')
           );
 

@@ -1,4 +1,12 @@
 <?php
+/**
+* Generates OJS3 navite import XML output from a CSV file exported by DSpace
+*
+* @author gonetil
+* @url http://sedici.unlp.edu.ar
+* Licence GPLv3
+*
+*/
 
 include_once "src/helpers/Utils.class.php";
 
@@ -132,8 +140,7 @@ class Csv2XmlWriter {
 
     $revision = $this->createElement('revision', array(
       'number'=>$this->article_count,
-  //    'genre' => 'SUBMISSION',
-      'viewable' => 'true',
+        'viewable' => 'true',
       'filetype'=>"application/pdf",
       'user_group_ref'=>"Author",
       'filename' => $filename,
