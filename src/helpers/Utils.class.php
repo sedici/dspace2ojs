@@ -5,7 +5,7 @@ class Utils {
   public static $default_lang = 'es';
 
   public static function getLocale($lang) {
-     return (isset(self::$locales[$lang])) ? self::$locales[$lang] : $locales[self::$default_lang]; }
+     return (isset(self::$locales[$lang])) ? self::$locales[$lang] : self::$locales[self::$default_lang]; }
 
   public static function safeDate($dateString) {
     $time = strtotime($dateString);

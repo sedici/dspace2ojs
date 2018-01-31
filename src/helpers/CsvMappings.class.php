@@ -7,7 +7,7 @@
 * Licence GPLv3
 
 */
-class Mappings {
+class CsvMappings {
   const MAP = array(
     "LANGUAGE"=>"dc.language",
     "ISSUED_DATE"=>"dc.date.issued",

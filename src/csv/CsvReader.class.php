@@ -19,9 +19,46 @@ class CsvReader {
       $this->reset(true);
     }
 
+   private function custom_parse_csv() {
+     $handler = fopen($this->file,"r");
+     if ($handler == FALSE) return;
+
+     $result = array();
+     $header = fgetcsv($handler);
+     $header_count = count($header);
+     $row = 1;
+     while (($record = fgetcsv($handler)) !== FALSE) {
+       if (count($record) != $header_count)
+        echo "registro $row tiene menos campos!!! (tiene ".count($record)." vs $header_count del header)";
+      else {
+        $combined_array = array();
+        for($i=0;$i<$header_count;$i++)
+          $combined_array[$header[$i]] = $record[$i];
+          //$combined_array[$header[$i]] = (empty($record[$i])) ? "" : $record[$i];
+        $result[] = $combined_array;
+      }
+       $row++;
+     }
+     return $result;
+
+   }
+
     private function parse_csv() {
+      return $this->custom_parse_csv();
       $csv = array_map('str_getcsv', file($this->file));
-      array_walk($csv, function(&$a) use ($csv) {  $a = array_combine($csv[0], $a); });
+      array_walk($csv, function(&$a) use ($csv) {
+        $b = @array_combine($csv[0], $a);
+        if ($b === FALSE)
+        {
+          echo "CVS PARSE ERROR: Both lines should have an equal number of elements";
+
+          echo "CSV[0] values:"; print_r($csv[0]);
+          echo "\n.......\n";
+          echo "Array value"; print_r($a);
+          echo "**********************************************************";
+        }
+        $a = $b;
+      });
       array_shift($csv); #remove header
       return $csv;
     }

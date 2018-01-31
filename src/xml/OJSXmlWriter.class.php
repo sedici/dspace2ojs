@@ -10,7 +10,7 @@
 
 include_once "src/helpers/Utils.class.php";
 
-class Csv2XmlWriter {
+class OJSXmlWriter {
 
   private $document;
   private $articles;
@@ -81,16 +81,14 @@ class Csv2XmlWriter {
       'stage'=>"production",
       'section_ref'=>'ART' )  //FIXME allow different sections
     );
-
+    $this->articles->appendChild( $article );
     $this->addLocalizedMetadata($article,'title',$csvParser->getLocalizedTitle());
     $this->addLocalizedMetadata($article,'abstract',$csvParser->getLocalizedAbstract());
     $this->addKeywords($article,$csvParser->getLocalizedKeywords());
     $this->addAuthors($article, $csvParser->getAuthors());
+    $this->addIssue($csvParser->getLocalizedIssue());
     $this->addSubmissionFile($article,$csvParser);
     $this->addPages($article,$csvParser->getLocalizedPages());
-    $this->articles->appendChild( $article );
-
-    $this->addIssue($csvParser->getLocalizedIssue());
   }
 
   private function addLocalizedMetadata($article,$metadata,$localizedMetadataValues) {
@@ -114,7 +112,7 @@ class Csv2XmlWriter {
       return;
 
     $this->issue_array[] = $issue; //new issue registered
-    
+
     $issue_id = $this->createElement('issue_identification',array(),null,$this->issue_document);
 
     $issue_id->appendChild( $this->createElement('volume',array(),$issue,$this->issue_document) ); //FIXME should parse $issue data
