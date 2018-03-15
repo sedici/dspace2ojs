@@ -18,13 +18,35 @@ include_once "src/csv/CsvReader.class.php";
 include_once "src/csv/CsvRecordParser.class.php";
 include_once "src/xml/OJSXmlWriter.class.php";
 
+$optionalParams = array('authors_group'=>'authors','into_section'=>'IMPORTED');
+
 $filename = (isset($argv[1])) ? $argv[1] : FALSE;
 if (!$filename) {
-  echo "          Missing csv file. Example: \r\n";
-  echo "\r\n              php csv2xml.php ~/journal_xyz \r\n";
-  echo "\r\n \r\n          Will process ~/journal_xyz.csv file and output ~/journal_xyz.xml file \r\n \r\n \r\n";
+  echo "      Missing csv file. Example: \r\n";
+  echo "\r              php csv2xml.php [filename] [optional params]\r\n";
+  echo "\r\n              Optional params:
+        \r                - authors_groups : name used for the author_group_ref (default authors)
+        \r                - into_section : section to map imported articles (default IMPORTED)";
+  echo "\r\n      Example:
+        \r      php csv2xml.php ~/journal_xyz authors_group=autores into_section=IMPORTADOS\r\n";
+  echo "\r      Will process ~/journal_xyz.csv file and output ~/journal_xyz.xml file . Authors will be mapped into autores group (which must exist in OJS), and articles will be placed into IMPORTADOS section (which must also exist in OJS) \r\n \r\n \r\n";
   return;
 }
+
+//process the remaining (optional) params
+for($i=2;$i<count($argv); $i++) {
+	list($param_name,$param_value)=explode('=',$argv[$i]);
+	if (isset($optionalParams[$param_name])) {
+		$optionalParams[$param_name] = $param_value;
+    echo $param_name." ".$param_value;
+  }
+	else
+		echo "\r\nParam $param_name unknown. Ignoring..\r\n";
+}
+
+var_dump($optionalParams);
+
+die;
 
 $reader = new CsvReader();
 $reader->open_file($filename.".csv");
