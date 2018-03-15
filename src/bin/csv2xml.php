@@ -37,12 +37,6 @@ while ( $record = $reader->next_record() ){
   $parser = new CsvRecordParser($record);
   $current++;
 
-  echo "\r\n Record no. $current \r\n";
-  $title = $parser->getLocalizedTitle();
-  if (isset($title['es'])) echo $title['es'];
-  else if (isset($title['en'])) echo $title['en'];
-  else echo $title['pt'];
-  echo "\r\n----------------------------\r\n";
 
   $xml->csv2xmlArticle($parser);
 

@@ -139,8 +139,9 @@ class CsvRecordParser extends RecordParser {
             $this->getLocalizedMetadata("PERSON"),
             array($this,'authorStringToArray')
           );
+        $institutional_authors = $this->getLocalizedMetadata("INSTITUTIONAL_AUTHOR");
 
-        return $authors;
+        return array_merge($authors, $institutional_authors);
       }
 
 }
