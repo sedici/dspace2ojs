@@ -79,7 +79,7 @@ class OJSXmlWriter {
       'locale' => Utils::getLocale($csvParser->getLanguage()),
       //'date_published' => Utils::safeDate ($csvParser->getDateIssued()),
       'stage'=>"production",
-      'section_ref'=>'ART' )  //FIXME allow different sections
+      'section_ref'=>'IMPORTADOS' )  //FIXME allow different sections
     );
     $this->articles->appendChild( $article );
     $this->addLocalizedMetadata($article,'title',$csvParser->getLocalizedTitle());
@@ -138,16 +138,29 @@ class OJSXmlWriter {
       'xmlns:xsi' => "http://www.w3.org/2001/XMLSchema-instance",
       'xsi:schemaLocation'=>"http://pkp.sfu.ca native.xsd")
     );
-    $authors = $authors_array['es']; //FIXME should retrieve and join authors from all languages
-    foreach ($authors as $author_data) {
-        $author_node = $this->createElement('author', array(
-          "primary_contact"=>"true",
-          "user_group_ref"=>"Author")
-        );
-        foreach ($author_data as $key => $value)
-          $author_node->appendChild( $this->createElement($key,array(),$value));
 
-       $authors_node->appendChild($author_node);
+    $authors = $authors_array['es']; //FIXME should retrieve and join authors from all languages
+    if (is_string($authors)) { //institutional author
+      $author_node = $this->createElement('author', array(
+        "primary_contact"=>"false",
+        "user_group_ref"=>"Autor")
+      );
+      $author_node->appendChild( $this->createElement("firstname",array(),$authors));
+      $author_node->appendChild( $this->createElement("lastname",array()," "));
+      $author_node->appendChild( $this->createElement("email",array(),"mail@fake.com"));
+      $authors_node->appendChild($author_node);
+    } else { //regular list of people
+
+      foreach ($authors as $author_data) {
+          $author_node = $this->createElement('author', array(
+            "primary_contact"=>"true",
+            "user_group_ref"=>"Autor")
+          );
+          foreach ($author_data as $key => $value)
+            $author_node->appendChild( $this->createElement($key,array(),$value));
+
+         $authors_node->appendChild($author_node);
+      }
     }
     $article->appendChild($authors_node);
   }
@@ -174,7 +187,7 @@ class OJSXmlWriter {
       'number'=>$this->article_count,
         'viewable' => 'true',
       'filetype'=>"application/pdf",
-      'user_group_ref'=>"Author",
+      'user_group_ref'=>"Autor",
       'filename' => $filename,
       'filesize' => $filesize,
       'uploader' => 'admin'
