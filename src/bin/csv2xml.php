@@ -18,7 +18,7 @@ include_once "src/csv/CsvReader.class.php";
 include_once "src/csv/CsvRecordParser.class.php";
 include_once "src/xml/OJSXmlWriter.class.php";
 
-$optionalParams = array('authors_group'=>'authors','into_section'=>'IMPORTED');
+$optionalParams = array('authors_group'=>'authors','into_section'=>'IMPORTED','limit'=>-1 );
 
 $filename = (isset($argv[1])) ? $argv[1] : FALSE;
 if (!$filename) {
@@ -38,31 +38,28 @@ for($i=2;$i<count($argv); $i++) {
 	list($param_name,$param_value)=explode('=',$argv[$i]);
 	if (isset($optionalParams[$param_name])) {
 		$optionalParams[$param_name] = $param_value;
-    echo $param_name." ".$param_value;
   }
 	else
 		echo "\r\nParam $param_name unknown. Ignoring..\r\n";
-}
+ }
 
-var_dump($optionalParams);
-
-die;
+$authors = $optionalParams['authors_group'];
+$section = $optionalParams['into_section'];
+$max_limit = $optionalParams['limit'];
 
 $reader = new CsvReader();
 $reader->open_file($filename.".csv");
 $current = 0;
 echo "---------Let's start-------\r\n";
-$xml = new OJSXmlWriter();
+$xml = new OJSXmlWriter($section,$authors);
 
-while ( $record = $reader->next_record() ){
-
+while ( ($record = $reader->next_record() ) && ( $current != $max_limit ) )
+{
   $parser = new CsvRecordParser($record);
   $current++;
-
-
   $xml->csv2xmlArticle($parser);
-
 }
+
 $size= $xml->getXML($filename.'.xml');
 $issues_size = $xml->getIssuesXML($filename.'_issues.xml');
 

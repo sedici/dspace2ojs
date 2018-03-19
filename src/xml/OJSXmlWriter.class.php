@@ -19,9 +19,15 @@ class OJSXmlWriter {
   private $issue_document;
   private $issues;
 
-  public function __construct() {
+  private $default_section;
+  private $default_authors_group;
+
+  public function __construct($destination_section,$group_authors_by) {
     $this->article_count = 0;
     $this->issue_array = array();
+    $this->default_section = $destination_section;
+    $this->default_authors_group = $group_authors_by;
+
 
     $this->document = new DOMDocument( "1.0", "UTF-8" );
     $this->articles = $this->createElement("articles", array(
@@ -79,7 +85,7 @@ class OJSXmlWriter {
       'locale' => Utils::getLocale($csvParser->getLanguage()),
       //'date_published' => Utils::safeDate ($csvParser->getDateIssued()),
       'stage'=>"production",
-      'section_ref'=>'IMPORTADOS' )  //FIXME allow different sections
+      'section_ref'=>$this->default_section )
     );
     $this->articles->appendChild( $article );
     $this->addLocalizedMetadata($article,'title',$csvParser->getLocalizedTitle());
@@ -143,7 +149,7 @@ class OJSXmlWriter {
     if (is_string($authors)) { //institutional author
       $author_node = $this->createElement('author', array(
         "primary_contact"=>"false",
-        "user_group_ref"=>"Autor")
+        "user_group_ref"=>$this->default_authors_group)
       );
       $author_node->appendChild( $this->createElement("firstname",array(),$authors));
       $author_node->appendChild( $this->createElement("lastname",array()," "));
@@ -154,7 +160,7 @@ class OJSXmlWriter {
       foreach ($authors as $author_data) {
           $author_node = $this->createElement('author', array(
             "primary_contact"=>"true",
-            "user_group_ref"=>"Autor")
+            "user_group_ref"=>$this->default_authors_group)
           );
           foreach ($author_data as $key => $value)
             $author_node->appendChild( $this->createElement($key,array(),$value));
@@ -187,7 +193,7 @@ class OJSXmlWriter {
       'number'=>$this->article_count,
         'viewable' => 'true',
       'filetype'=>"application/pdf",
-      'user_group_ref'=>"Autor",
+      'user_group_ref'=>$this->default_authors_group,
       'filename' => $filename,
       'filesize' => $filesize,
       'uploader' => 'admin'
