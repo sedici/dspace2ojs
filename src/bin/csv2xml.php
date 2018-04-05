@@ -25,7 +25,7 @@ if (!$filename) {
   echo "      Missing csv file. Example: \r\n";
   echo "\r              php csv2xml.php [filename] [optional params]\r\n";
   echo "\r\n              Optional params:
-        \r                - authors_groups : name used for the author_group_ref (default authors)
+        \r                - authors_group : name used for the author_group_ref (default authors)
         \r                - into_section : section to map imported articles (default IMPORTED)
         \r                - split_csv [yes | no]: if the input CSV file contains items from many collections, items can be splitted into several (smaller) csv files, one per collection";
   echo "\r\n      Example:

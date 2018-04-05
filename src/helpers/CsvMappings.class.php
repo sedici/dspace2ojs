@@ -21,7 +21,7 @@ class CsvMappings {
     "PERSON"=>"sedici.creator.person",
     "INSTITUTIONAL_AUTHOR" => "sedici.creator.corporate",
     "HTML_URI_TAG_XPATH_SELECTOR" => "//meta[@name='citation_pdf_url']",   //USED TO DETECT FULLTEXT URI
-    "HTML_URI_ATTRIBUTE" => "content"  //ATRIBUTE FROM TAG SELECTOR CONTAINING THE ACTUAL FULLTEXT URI
+    "HTML_URI_ATTRIBUTE" => "content"  //ATTRIBUTE FROM TAG SELECTOR CONTAINING THE ACTUAL FULLTEXT URI
   );
 
   public static function get($key) {
