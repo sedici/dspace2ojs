@@ -21,7 +21,7 @@ php src/bin/csv2xml.php
 
               Missing csv file. Example:
       
-              php csv2xml.php [filename] [optional params]
+              php src/bin/csv2xml.php [filename] [optional params]
 
               Optional params:
                 - authors_group : name used for the author_group_ref (default authors)
