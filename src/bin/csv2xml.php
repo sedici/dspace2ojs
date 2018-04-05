@@ -23,7 +23,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-* 
+*
 */
 
 include_once "src/csv/CsvReader.class.php";
@@ -40,6 +40,7 @@ if (!$filename) {
         \r                - authors_group : name used for the author_group_ref (default authors)
         \r                - into_section : section to map imported articles (default IMPORTED)
         \r                - split_csv [yes | no]: if the input CSV file contains items from many collections, items can be splitted into several (smaller) csv files, one per collection";
+        \r                - limit : maximum number of articles to process (usefull for testing purposes)
   echo "\r\n      Example:
         \r      php csv2xml.php ~/journal_xyz authors_group=autores into_section=IMPORTADOS split=no\r\n";
   echo "\r      Will process ~/journal_xyz.csv file and output ~/journal_xyz.xml file . Authors will be mapped into autores group (which must exist in OJS), and articles will be placed into IMPORTADOS section (which must also exist in OJS) \r\n \r\n \r\n";
