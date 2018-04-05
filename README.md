@@ -18,7 +18,9 @@ section tagged as IMPORTED.
 Running the tool without params will list all available parameters:
 
 php src/bin/csv2xml.php 
-      Missing csv file. Example: 
+
+              Missing csv file. Example:
+      
               php csv2xml.php [filename] [optional params]
 
               Optional params:
