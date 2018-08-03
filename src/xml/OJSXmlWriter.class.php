@@ -205,7 +205,7 @@ class OJSXmlWriter {
       'number'=>$this->article_count,
         'viewable' => 'true',
       'filetype'=>"application/pdf",
-      'user_group_ref'=>$this->default_authors_group,
+      //'user_group_ref'=>$this->default_authors_group,  //===> the attribute user_group_ref is not allowed in revisions
       'filename' => $filename,
       'filesize' => $filesize,
       'uploader' => 'admin'

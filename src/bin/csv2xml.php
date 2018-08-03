@@ -30,7 +30,7 @@ include_once "src/csv/CsvReader.class.php";
 include_once "src/csv/CsvRecordParser.class.php";
 include_once "src/xml/OJSXmlWriter.class.php";
 
-$optionalParams = array('authors_group'=>'authors','into_section'=>'IMPORTED','limit'=>-1, 'split_csv'=>'no' );
+$optionalParams = array('authors_group'=>'Author','into_section'=>'IMPORTED','limit'=>-1, 'split_csv'=>'no' );
 
 $filename = (isset($argv[1])) ? $argv[1] : FALSE;
 if (!$filename) {
