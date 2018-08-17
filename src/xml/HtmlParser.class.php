@@ -37,7 +37,12 @@ class HtmlParser {
     }
 
     public function getFileUri() {
-        return $this->domxpath->query($this->xpath_selector)->item(0)->getAttribute($this->xpath_attribute);
+        $item = $this->domxpath->query($this->xpath_selector)->item(0);
+        if ($item)
+           return $item->getAttribute($this->xpath_attribute);
+        else 
+            return "";
+        
     }
 
 

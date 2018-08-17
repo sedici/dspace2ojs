@@ -44,8 +44,13 @@ abstract class RecordParser {
 
   public function retrieveFulltext() {
     $uri = $this->getFulltextUri();
-    echo "Fetching from $uri \n";
-    return file_get_contents($uri);
+    if ($uri) { 
+       echo "Fetching from $uri \n";
+       return file_get_contents($uri); 
+      } else {
+        echo "Found record with no full text available";
+        return false;
+      }
   }
 
 

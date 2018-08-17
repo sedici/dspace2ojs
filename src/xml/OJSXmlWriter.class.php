@@ -191,7 +191,8 @@ class OJSXmlWriter {
 
     $locale=$csvParser->getLanguage();
     $filedata = $csvParser->retrieveFulltext();
-    $filename='article.pdf'; //FIXME generate a better filename based on some info from the article (first author maybe?)
+    if ($filedata)
+      $filename='article.pdf'; //FIXME generate a better filename based on some info from the article (first author maybe?)
 
     $submission = $this->createElement('submission_file', array(
       "xmlns:xsi"=>"http://www.w3.org/2001/XMLSchema-instance",
