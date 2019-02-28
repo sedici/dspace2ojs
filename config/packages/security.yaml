@@ -16,7 +16,12 @@ security:
             security: false
         main:
             anonymous: true
-
+            guard:
+                authenticators:
+                    - App\Security\LoginFormAuthenticator
+            logout:
+                path:   app_logout
+                target: app_login
             # activate different ways to authenticate
 
             # http_basic: true
@@ -29,4 +34,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+          - { path: ^/file, roles: ROLE_USER }
+          - { path: ^/user, roles: ROLE_USER }
+          - { path: ^/home, roles: ROLE_USER }
+
