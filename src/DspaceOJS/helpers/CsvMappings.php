@@ -19,7 +19,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-namespace App\Service\helpers;
+namespace App\DspaceOJS\helpers;
 class CsvMappings {
   const MAP = array(
     "LANGUAGE"=>"dc.language",

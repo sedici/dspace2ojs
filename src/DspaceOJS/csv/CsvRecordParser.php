@@ -21,10 +21,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-namespace App\Service\csv;
-use App\Service\AbstractClass\RecordParser;
-use App\Service\helpers\CsvMappings;
-use App\Service\xml\HtmlParser;
+namespace App\DspaceOJS\csv;
+use App\DspaceOJS\AbstractClass\RecordParser;
+use App\DspaceOJS\helpers\CsvMappings;
+use App\DspaceOJS\xml\HtmlParser;
 
 
   // include_once 'src/helpers/CsvMappings.class.php';

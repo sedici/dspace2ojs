@@ -17,8 +17,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-namespace App\Service\csv;
-use App\Service\helpers\ErrorHandler;
+namespace App\DspaceOJS\csv;
+use App\DspaceOJS\helpers\ErrorHandler;
 
 class CsvReader {
 

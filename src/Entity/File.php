@@ -37,6 +37,14 @@ class File
      */
     private $archived;
 
+    public function __construct($current_user,$path)
+    {
+        $this->user = $current_user;
+        $this->path= $path;
+        $this->archived= false;
+        $this->date_create= new \DateTime('now');
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -89,4 +97,6 @@ class File
 
         return $this;
     }
+
+ 
 }

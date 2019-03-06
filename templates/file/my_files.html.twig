@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello FileController!{% endblock %}
+
+{% block body %}
+{{dump(app)}}
+
+<div class="example-wrapper">
+    <ul>  
+    {% for file in files %}
+        <li><a href="{{ asset(file.path) }}">View brochure (PDF)</a></li>
+    {% endfor %}
+    <ul>
+</div>
+{% endblock %}

@@ -1,18 +1,24 @@
 <?php
 
 namespace App\Service;
-use App\Service\csv\CsvReader;
-use App\Service\csv\CsvRecordParser;
-use App\Service\xml\OJSXmlWriter;
+use App\DspaceOJS\csv\CsvReader;
+use App\DspaceOJS\csv\CsvRecordParser;
+use App\DspaceOJS\xml\OJSXmlWriter;
+use App\Entity\File;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 class DSpace2OJSService
 {
-    // private $reader;
-    // public function __construct(CsvReader $reader)
-    // {
-    //     $this->reader = $reader;
-    // }
+    private $token_storage;
+    private $em;
 
+    public function __construct( TokenStorage $token_storage,EntityManagerInterface $em )
+    {
+        $this->token_storage = $token_storage;
+        $this->em = $em;
+    }
+    
     public function splitFileIntoMultipleCSV($filename)
     {
         $aggregated_csv = fopen($filename . ".csv", "r");  //csv containing many collections
@@ -61,9 +67,7 @@ class DSpace2OJSService
     public function processFile($filename, $section, $authors, $max_limit )
     {
         $reader = new CsvReader();
-        // var_dump($reader);die;
         $reader->open_file($filename); 
-        
         $current = 0;
         $xml = new OJSXmlWriter($section, $authors, new CsvRecordParser($reader->first_element()));
         while (($record = $reader->next_record()) && ($current != $max_limit)) {
@@ -71,8 +75,15 @@ class DSpace2OJSService
             $current++;
             $xml->csv2xmlArticle($parser);
         }
-
-        $size = $xml->getXML($filename . '.xml');
+        $filename.='.xml';
+        $size = $xml->getXML($filename );
+        if($size){
+            $file= new File($this->token_storage->getToken()->getUser(),$filename);
+            $file->setDateCreated(new \DateTime('now'));
+            $this->em->persist($file);
+            //FIXME cuando arregle el error en la app del convertior va para processfiles
+            $this->em->flush();
+        }
         // $issues_size = $xml->getIssuesXML($filename.'_issues.xml');
     }
 }

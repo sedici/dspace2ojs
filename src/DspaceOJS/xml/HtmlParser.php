@@ -18,10 +18,10 @@
 *
 */
 
-namespace App\Service\xml;
+namespace App\DspaceOJS\xml;
 class HtmlParser {
 
-  private $page = '';
+  private $page;
   private $domxpath = null;
   private $xpath_selector;
   private $xpath_attribute;

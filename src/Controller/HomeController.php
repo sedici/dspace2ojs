@@ -15,9 +15,9 @@ class HomeController extends AbstractController
     /**
      * @Route("/home", name="home")
      */
-    public function index(Request $request, UserInterface $current_user, DSpace2OJSService $csv2xml )
+    public function index(Request $request, UserInterface $current_user,DSpace2OJSService $csv2xml)
     {
-        
+        // $csv2xml=new DSpace2OJSService();
         $form= $this->createForm( CsvType::class);
         $form->handleRequest($request);
         if($form->isSubmitted() ){

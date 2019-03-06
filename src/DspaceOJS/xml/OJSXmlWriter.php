@@ -19,8 +19,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-namespace App\Service\xml;
-use App\Service\helpers\Utils;
+namespace App\DspaceOJS\xml;
+use App\DspaceOJS\helpers\Utils;
+use App\Entity\File;
 //include_once "src/helpers/Utils.class.php";
 
 class OJSXmlWriter {

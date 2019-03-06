@@ -17,26 +17,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
+namespace App\DspaceOJS\helpers;
 
-namespace App\Service\helpers;
-class Utils {
-  private static $locales = array('es'=>'es_ES', 'en'=>'en_US', 'pt'=>'pt_BR');
-  public static $default_lang = 'es';
+class ErrorHandler {
 
-  public static function getLocale($lang) {
-     return (isset(self::$locales[$lang])) ? self::$locales[$lang] : self::$locales[self::$default_lang]; }
-  
-  public function validateDate($date, $format = 'Y-m-d H:i:s')
-  {
-      $d = \DateTime::createFromFormat($format, $date);
-      return $d && $d->format($format) == $date;
-  }
-     
-  public static function safeDate($dateString) {
-    $dateString.= (self::validateDate($dateString,'Y') ) ? '-01-01' : '';
-    $time = strtotime($dateString);
-    return date('Y-m-d',$time);
-  }
+ 
+  static function error ($errorMsg) {
+      echo $errorMsg; die;
+    }
 }
-
-?>

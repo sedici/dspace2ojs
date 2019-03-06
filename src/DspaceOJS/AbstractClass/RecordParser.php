@@ -17,7 +17,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-namespace App\Service\AbstractClass;
+namespace App\DspaceOJS\AbstractClass;
 abstract class RecordParser {
   protected $languages = array("es","en","pt");
   protected $default_lang = 'es';
