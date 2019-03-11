@@ -99,13 +99,13 @@ class CsvRecordParser extends RecordParser {
       */
       private function getEmail($splittedAuthor) {
         $invalid_characters = array("$", "%", "#", "<", ">", "|", " ", "'", "`",".",",");
-        return str_replace($invalid_characters, "", $splittedAuthor[1]).'@'.str_replace($invalid_characters, "", $splittedAuthor[0]) . '.fake';
+        return str_replace($invalid_characters, "", isset($splittedAuthor[1]) ? $splittedAuthor[1] : "").'@'.str_replace($invalid_characters, "", isset($splittedAuthor[0]) ? $splittedAuthor[0] : ""). '.fake';
         }
 
       private function authorStringToArray($string) {
         $split = explode(",",$string);
-        $author = array( "firstname" => $split[1],
-                         "lastname" => $split[0],
+        $author = array( "firstname" => isset($split[1]) ? $split[1] : "",
+                         "lastname" => isset($split[0]) ? $split[0] : "",
                          "email" => $this->getEmail($split)
                         );
         return $author;

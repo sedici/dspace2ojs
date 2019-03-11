@@ -84,7 +84,8 @@ class OJSXmlWriter {
    if (!$document)
      $document = $this->document;
 
-   $element = $document->createElement($tag,$value);
+   $element = $document->createElement($tag,htmlspecialchars($value));
+   
    foreach ($attributes_array as $key => $value)
      $element->setAttribute($key,$value);
    return $element;
@@ -109,7 +110,7 @@ class OJSXmlWriter {
     $this->addLocalizedMetadata($article,'title',$csvParser->getLocalizedTitle());
     $this->addLocalizedMetadata($article,'abstract',$csvParser->getLocalizedAbstract());
     $this->addKeywords($article,$csvParser->getLocalizedKeywords());
-    // $this->addAuthors($article, $csvParser->getAuthors());
+    $this->addAuthors($article, $csvParser->getAuthors());
     $this->addSubmissionFile($article,$csvParser);
     $this->addPages($article,$csvParser->getLocalizedPages());
   }
@@ -140,7 +141,7 @@ class OJSXmlWriter {
     $this->issues->appendChild($sections);
   }
   private function addPages($article,$localizedPages) {
-      $pages = isset($localizedPages[Utils::$default_lang])?$localizedPages[Utils::$default_lang]:$localizedPages['en'];
+      $pages = isset($localizedPages[Utils::$default_lang])?$localizedPages[Utils::$default_lang]: (isset($localizedPages['en']) ? $localizedPages['en']: "" );
       $article->appendChild( $this->createElement('pages',array(),$pages));
   }
 

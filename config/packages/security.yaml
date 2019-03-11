@@ -19,6 +19,10 @@ security:
             guard:
                 authenticators:
                     - App\Security\LoginFormAuthenticator
+            # form_login:
+            #     # ...
+            #     default_target_path: login_success
+            #     always_use_default_target_path: true
             logout:
                 path:   app_logout
                 target: app_login

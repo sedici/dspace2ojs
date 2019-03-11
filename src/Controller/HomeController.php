@@ -10,6 +10,13 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Form\CsvType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Service\DSpace2OJSService;
+use App\Command\DspaceOjsCommand;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\HttpKernel\KernelInterface;
+
 class HomeController extends AbstractController
 {
     /**
@@ -42,5 +49,27 @@ class HomeController extends AbstractController
         return $this->render('home/index.html.twig', [
             'controller_name' => 'HomeController' , 'form'=> $form->createView() ,
         ]);
+    }
+    /**
+     * @Route("/test", name="test")
+     */
+    public function testExecute( KernelInterface $kernel)
+    {
+        $application = new Application();
+        $application->setAutoExit(false);
+
+        $input = new ArrayInput([
+           'command' => 'app:dspaceojs',
+           // (optional) define the value of command arguments
+           'filename' => 'public/files/user_4/10915-837/10915-836',
+           // (optional) pass options to the command
+        ]);
+
+        // You can use NullOutput() if you don't need the output
+        $output = new BufferedOutput();
+        $application->run($input, $output);
+        
+        $this->redirect('home');
+        return new Response();
     }
 }

@@ -21,6 +21,7 @@ class DSpace2OJSService
     
     public function splitFileIntoMultipleCSV($filename)
     {
+        // var_dump(getcwd());die;
         $aggregated_csv = fopen($filename . ".csv", "r");  //csv containing many collections
         $directory = dirname($filename . ".csv");
         $header = fgetcsv($aggregated_csv);  //header must be replicated in each csv file
@@ -84,6 +85,6 @@ class DSpace2OJSService
             //FIXME cuando arregle el error en la app del convertior va para processfiles
             $this->em->flush();
         }
-        // $issues_size = $xml->getIssuesXML($filename.'_issues.xml');
+        $issues_size = $xml->getIssuesXML($filename.'_issues.xml');
     }
 }
