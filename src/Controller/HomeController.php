@@ -11,7 +11,8 @@ use App\Form\CsvType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Service\DSpace2OJSService;
 use App\Command\DspaceOjsCommand;
-use Symfony\Component\Console\Application;
+// use Symfony\Component\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -55,13 +56,13 @@ class HomeController extends AbstractController
      */
     public function testExecute( KernelInterface $kernel)
     {
-        $application = new Application();
+        $application = new Application($kernel);
         $application->setAutoExit(false);
 
         $input = new ArrayInput([
            'command' => 'app:dspaceojs',
            // (optional) define the value of command arguments
-           'filename' => 'public/files/user_4/10915-837/10915-836',
+           'filename' => 'files/user_4/10915-837/10915-836',
            // (optional) pass options to the command
         ]);
 
@@ -69,7 +70,6 @@ class HomeController extends AbstractController
         $output = new BufferedOutput();
         $application->run($input, $output);
         
-        $this->redirect('home');
         return new Response();
     }
 }

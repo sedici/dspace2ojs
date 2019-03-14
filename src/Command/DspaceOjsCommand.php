@@ -34,11 +34,14 @@ class DspaceOjsCommand extends Command
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    {  
+        echo $input->getArgument('filename');
         $files= $this->dspace_ojs_service->splitFileIntoMultipleCSV( $input->getArgument('filename'));
+        var_dump($files);
         $options['into_section']='IMPORTED';
         $options['authors_group']='Autor';
         $options['limit']=-1;
+        
         $this->dspace_ojs_service->processFiles($files,$options);
         $output->writeln([
             // echo files/user_4/10915-837/10915-836,

@@ -78,13 +78,13 @@ class DSpace2OJSService
         }
         $filename.='.xml';
         $size = $xml->getXML($filename );
-        if($size){
-            $file= new File($this->token_storage->getToken()->getUser(),$filename);
-            $file->setDateCreated(new \DateTime('now'));
-            $this->em->persist($file);
-            //FIXME cuando arregle el error en la app del convertior va para processfiles
-            $this->em->flush();
-        }
-        $issues_size = $xml->getIssuesXML($filename.'_issues.xml');
+        // if($size){
+        //     $file= new File($this->token_storage->getToken()->getUser(),$filename);
+        //     $file->setDateCreated(new \DateTime('now'));
+        //     $this->em->persist($file);
+        //     //FIXME cuando arregle el error en la app del convertior va para processfiles
+        //     $this->em->flush();
+        // }
+        // $issues_size = $xml->getIssuesXML($filename.'_issues.xml');
     }
 }
