@@ -27,6 +27,7 @@ class CsvReader {
     private $current=-1;
 
     public function open_file($path) {
+      // $path=getgwc().$path;
       if (!file_exists($path))
         return ErrorHandler::error("File $path does not exist");
 

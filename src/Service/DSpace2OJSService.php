@@ -19,11 +19,10 @@ class DSpace2OJSService
         $this->em = $em;
     }
     
-    public function splitFileIntoMultipleCSV($filename)
+    public function splitFileIntoMultipleCSV($fileDir,$filename)
     {
-        // var_dump(getcwd());die;
-        $aggregated_csv = fopen($filename . ".csv", "r");  //csv containing many collections
-        $directory = dirname($filename . ".csv");
+        $aggregated_csv = fopen($fileDir.$filename . ".csv", "r");  //csv containing many collections
+        $directory = dirname($fileDir.$filename . ".csv");
         $header = fgetcsv($aggregated_csv);  //header must be replicated in each csv file
         $current_collection = null;
         $csv_file = null;
@@ -41,10 +40,17 @@ class DSpace2OJSService
                 $files[] = $directory . "/" . $current_collection;  //a new file has been added to the set
                 $csv_file = fopen($directory . "/" . $current_collection, 'w');
                 fputcsv($csv_file, $header);
+                $file= new File($this->token_storage->getToken()->getUser(),$directory . "/" . $current_collection);
+                $file->setDateCreated(new \DateTime('now'));
+                $file->setParentFile($filename);
+                $this->em->persist($file);
+                //FIXME cuando arregle el error en la app del convertior va para processfiles
+                
             }
             fputcsv($csv_file, $record);
         }
         fclose($csv_file);
+        $this->em->flush();
         return $files;
     }
 
@@ -66,9 +72,10 @@ class DSpace2OJSService
     }
     /** reads s csv file and generates the XML to import into OJS */
     public function processFile($filename, $section, $authors, $max_limit )
-    {
+    {   
+        $files_dir = explode('src',dirname(__FILE__))[0].'public/';
         $reader = new CsvReader();
-        $reader->open_file($filename); 
+        $reader->open_file($files_dir.$filename); 
         $current = 0;
         $xml = new OJSXmlWriter($section, $authors, new CsvRecordParser($reader->first_element()));
         while (($record = $reader->next_record()) && ($current != $max_limit)) {
@@ -77,14 +84,7 @@ class DSpace2OJSService
             $xml->csv2xmlArticle($parser);
         }
         $filename.='.xml';
-        $size = $xml->getXML($filename );
-        // if($size){
-        //     $file= new File($this->token_storage->getToken()->getUser(),$filename);
-        //     $file->setDateCreated(new \DateTime('now'));
-        //     $this->em->persist($file);
-        //     //FIXME cuando arregle el error en la app del convertior va para processfiles
-        //     $this->em->flush();
-        // }
-        // $issues_size = $xml->getIssuesXML($filename.'_issues.xml');
+        $size = $xml->getXML($files_dir.$filename );
+        return $filename;
     }
 }

@@ -8,16 +8,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Form\CsvType;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Service\DSpace2OJSService;
-use App\Command\DspaceOjsCommand;
-// use Symfony\Component\Console\Application;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\HttpKernel\KernelInterface;
-
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\File;
+use Doctrine\ORM\EntityManager;
 class HomeController extends AbstractController
 {
     /**
@@ -40,8 +37,9 @@ class HomeController extends AbstractController
                     $fileName
                 );
                 // split csv file by publication number
-                $files=$csv2xml->splitFileIntoMultipleCSV($fileDir.'/'.$path_info['filename']);
-                $csv2xml->processFiles($files,$params);
+                $files=$csv2xml->splitFileIntoMultipleCSV($fileDir.'/',$path_info['filename']);
+                return $this->redirectToRoute('my_files');
+                // $csv2xml->processFiles($files,$params);
             } catch (FileException $e) {
                 // ... handle exception if something happens during file upload
             }
@@ -51,25 +49,33 @@ class HomeController extends AbstractController
             'controller_name' => 'HomeController' , 'form'=> $form->createView() ,
         ]);
     }
-    /**
-     * @Route("/test", name="test")
+
+   /**
+     * @Route("/home/process_file", name="process-file")
      */
-    public function testExecute( KernelInterface $kernel)
-    {
-        $application = new Application($kernel);
-        $application->setAutoExit(false);
-
-        $input = new ArrayInput([
-           'command' => 'app:dspaceojs',
-           // (optional) define the value of command arguments
-           'filename' => 'files/user_4/10915-837/10915-836',
-           // (optional) pass options to the command
-        ]);
-
-        // You can use NullOutput() if you don't need the output
-        $output = new BufferedOutput();
-        $application->run($input, $output);
+    public function processFile(Request $request,DSpace2OJSService $csv2xml)
+    {    
         
-        return new Response();
+        $data=$request->query->get('data');
+        $fileName=$csv2xml->processFile($data,'IMPORTED','Autor',-1);
+        if ($fileName) {
+            $doctrine= $this->getDoctrine();
+            $em= $doctrine->getManager();
+            $file_repo= $em-> getRepository(File::class);
+            $file = $file_repo->findOneBy(array('path' => $data));
+            $file->setConverted(true);
+            $em->persist($file);
+            $em->flush();
+        }
+        $encoders = array(new JsonEncoder());
+        $normalizers = array(new ObjectNormalizer());
+        $serializer = new Serializer($normalizers, $encoders);
+        $response = new JsonResponse();
+        $response->setStatusCode(200);
+        $response->setData(array(
+             
+            'response' => $fileName
+        ));
+        return $response;
     }
 }

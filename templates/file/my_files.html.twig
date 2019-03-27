@@ -3,13 +3,46 @@
 {% block title %}Hello FileController!{% endblock %}
 
 {% block body %}
-{{dump(app)}}
 
 <div class="example-wrapper">
-    <ul>  
-    {% for file in files %}
-        <li><a href="{{ asset(file.path) }}">View brochure (PDF)</a></li>
-    {% endfor %}
-    <ul>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Xml</th>
+                <th scope="col">Csv</th>
+                <th scope="col">Process
+                     <button class="process_files">
+                        <small>Process all</small>
+                    </button>
+                </th>                
+            </tr>
+        </thead>
+        <tbody>
+            {% for file in files %}
+                <tr>
+                    <th scope="row">{{loop.index}}</th>
+                    <td><a href="{{ asset(file.path) }}">{{ asset(file.path) | split('/') | last }} </a></td>
+                    <td id= "{{ asset(file.path) | split('/') | last | split('.') | first}}">  
+                        {% if  file.converted %}
+                            <a href="{{ asset(file.path) ~ '.xml' }}" >{{ asset(file.path) | split('/') | last ~ '.xml'}} </a></td>
+                        {% else %}
+                                -
+                        {% endif %}
+                    <td>
+                        {% if not file.converted %}
+                            <button class="process_file" value="{{file.path}}" id_td= "{{ asset(file.path) | split('/') | last | split('.') | first}}">Process</button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 </div>
+{% endblock %}
+{% block javascripts %}
+ {{ parent() }}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> 
+ <script src="{{ asset('js/process_ajax.js') }}">
 {% endblock %}

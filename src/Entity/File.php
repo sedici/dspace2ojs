@@ -26,7 +26,10 @@ class File
      * @ORM\Column(type="string", length=255)
      */
     private $path;
-
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $parent_file;
     /**
      * @ORM\Column(type="date")
      */
@@ -36,12 +39,18 @@ class File
      * @ORM\Column(type="boolean")
      */
     private $archived;
+     
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $converted;
 
     public function __construct($current_user,$path)
     {
         $this->user = $current_user;
         $this->path= $path;
         $this->archived= false;
+        $this->converted= false;
         $this->date_create= new \DateTime('now');
     }
 
@@ -94,6 +103,30 @@ class File
     public function setArchived(bool $archived): self
     {
         $this->archived = $archived;
+
+        return $this;
+    }
+
+    public function getParentFile(): ?string
+    {
+        return $this->parent_file;
+    }
+
+    public function setParentFile(string $parent_file): self
+    {
+        $this->parent_file = $parent_file;
+
+        return $this;
+    }
+
+    public function getConverted(): ?bool
+    {
+        return $this->converted;
+    }
+
+    public function setConverted(bool $converted): self
+    {
+        $this->converted = $converted;
 
         return $this;
     }
