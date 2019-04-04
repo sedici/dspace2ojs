@@ -7,6 +7,7 @@ use App\DspaceOJS\xml\OJSXmlWriter;
 use App\Entity\File;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use App\Entity\SettingFile;
 
 class DSpace2OJSService
 {
@@ -19,14 +20,16 @@ class DSpace2OJSService
         $this->em = $em;
     }
     
-    public function splitFileIntoMultipleCSV($fileDir,$filename)
+    public function splitFileIntoMultipleCSV($fileDir,$filename,$into_section,$authors_group,$limit)
     {
         $aggregated_csv = fopen($fileDir.$filename . ".csv", "r");  //csv containing many collections
         $directory = dirname($fileDir.$filename . ".csv");
         $header = fgetcsv($aggregated_csv);  //header must be replicated in each csv file
         $current_collection = null;
         $csv_file = null;
-        $files = array();  //array of files to return
+        $files = array();  
+        $setting_file= new SettingFile($filename,$into_section,$authors_group,$limit);
+        
         while ($record = fgetcsv($aggregated_csv)) {
             $collection_safe = $this->getSingleCollection(str_replace('/', '_', $record[1]));
             $collection_safe .= '.csv';
@@ -41,10 +44,10 @@ class DSpace2OJSService
                 $csv_file = fopen($directory . "/" . $current_collection, 'w');
                 fputcsv($csv_file, $header);
                 $file= new File($this->token_storage->getToken()->getUser(),$directory . "/" . $current_collection);
-                $file->setDateCreated(new \DateTime('now'));
-                $file->setParentFile($filename);
+                $file->setDateCreated((new \DateTime('now'))->format('d/m/Y'));
+                $file->setSettingFile($setting_file);
                 $this->em->persist($file);
-                //FIXME cuando arregle el error en la app del convertior va para processfiles
+                // $this->em->persist($setting_file);
                 
             }
             fputcsv($csv_file, $record);

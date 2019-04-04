@@ -1,48 +1,61 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello FileController!{% endblock %}
+{% block title %}Hello FileController!
+{% endblock %}
 
 {% block body %}
+    {% for setting in setting_files %}
+        <div class="example-wrapper">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Xml</th>
+                        <th scope="col">Csv</th>
+                        <th scope="col">Process
+                            <button class="process_files    {{setting.parentFile}}">
+                                <small>Process all</small>
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for file in setting.files %}
 
-<div class="example-wrapper">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Xml</th>
-                <th scope="col">Csv</th>
-                <th scope="col">Process
-                     <button class="process_files">
-                        <small>Process all</small>
-                    </button>
-                </th>                
-            </tr>
-        </thead>
-        <tbody>
-            {% for file in files %}
-                <tr>
-                    <th scope="row">{{loop.index}}</th>
-                    <td><a href="{{ asset(file.path) }}">{{ asset(file.path) | split('/') | last }} </a></td>
-                    <td id= "{{ asset(file.path) | split('/') | last | split('.') | first}}">  
-                        {% if  file.converted %}
-                            <a href="{{ asset(file.path) ~ '.xml' }}" >{{ asset(file.path) | split('/') | last ~ '.xml'}} </a></td>
-                        {% else %}
+                        <tr>
+                            <th scope="row">{{loop.index}}</th>
+                            <td>
+                                <a href="{{ asset(file.path) }}">{{ asset(file.path) | split('/') | last }}
+                                </a>
+                            </td>
+                            <td id="{{ asset(file.path) | split('/') | last | split('.') | first}}">
+                                {% if  file.converted %}
+                                    <a href="{{ asset(file.path) ~ '.xml' }}">{{ asset(file.path) | split('/') | last ~ '.xml'}}
+                                    </a>
+                                </td>
+                            {% else %}
                                 -
-                        {% endif %}
-                    <td>
-                        {% if not file.converted %}
-                            <button class="process_file" value="{{file.path}}" id_td= "{{ asset(file.path) | split('/') | last | split('.') | first}}">Process</button>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                            {% endif %}
+                            <td>
+                                {% if not file.converted %}
+                                    <button class="process_file parent_{{setting.parentFile}}" value="{{file.path}}" id_td="{{ asset(file.path) | split('/') | last | split('.') | first}}">Process</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
-</div>
+        </div>
+    {% endfor %}
+
 {% endblock %}
 {% block javascripts %}
- {{ parent() }}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> 
- <script src="{{ asset('js/process_ajax.js') }}">
-{% endblock %}
+    {{ parent() }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+
+
+
+</script>
+    <script src="{{ asset('js/process_ajax.js') }}">
+        {% endblock %}

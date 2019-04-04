@@ -21,6 +21,11 @@ class File
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
+     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\SettingFile", inversedBy="files", cascade={"all"}, fetch="EAGER")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $setting_file;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -29,10 +34,7 @@ class File
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $parent_file;
-    /**
-     * @ORM\Column(type="date")
-     */
+ 
     private $date_created;
 
     /**
@@ -51,7 +53,7 @@ class File
         $this->path= $path;
         $this->archived= false;
         $this->converted= false;
-        $this->date_create= new \DateTime('now');
+        // $this->date_create= new \DateTime('now');
     }
 
     public function getId(): ?int
@@ -83,12 +85,12 @@ class File
         return $this;
     }
 
-    public function getDateCreated(): ?\DateTimeInterface
+    public function getDateCreated()
     {
         return $this->date_created;
     }
 
-    public function setDateCreated(\DateTimeInterface $date_created): self
+    public function setDateCreated($date_created): self
     {
         $this->date_created = $date_created;
 
@@ -127,6 +129,18 @@ class File
     public function setConverted(bool $converted): self
     {
         $this->converted = $converted;
+
+        return $this;
+    }
+
+    public function getSettingFile(): ?SettingFile
+    {
+        return $this->setting_file;
+    }
+
+    public function setSettingFile(?SettingFile $setting_file): self
+    {
+        $this->setting_file = $setting_file;
 
         return $this;
     }

@@ -21,10 +21,15 @@ class FileController extends AbstractController
      * @Route("/file/my-files", name="my_files")
      */
     public function myFiles(UserInterface $current_user)
-     { //  var_dump(dirname(__FILE__));die;
-        $current_user->getFiles();
+     {
+        $files=$current_user->getFiles();
+        $setting_files=array();
+        foreach ($files as $value) {
+            if(!in_array($value->getSettingFile(),$setting_files))
+                $setting_files[] = $value->getSettingFile();
+        }
         return $this->render('file/my_files.html.twig', [
-            'files' => $current_user->getFiles(),
+            'files' => $current_user->getFiles(), 'setting_files' => $setting_files
         ]);
     }
 }

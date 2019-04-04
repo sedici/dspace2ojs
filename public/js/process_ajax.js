@@ -11,10 +11,13 @@ jQuery(document).ready(function($){
        process_file(this)
     });
     buttonProcessFiles.click(function(evt){
-        
-        buttonProcessFile.each(function(){
-            process_file(this)
-        });
+        console.log($(this).removeClass('process_files').attr('class'));
+            var class_button=$(this).removeClass('process_files').attr('class');
+            console.log(class_button);  
+            let buttonProcessFile=$(`.parent_${class_button}`);
+                buttonProcessFile.each(function(){
+                    process_file(this)
+                });
 
     });
 });
@@ -29,7 +32,7 @@ function process_file(elem){
         data: {"data" : data},
         success: function(respuesta) {
             var name= respuesta.response.split("/").pop();
-            $(id).html(`<a href="${respuesta.response}">${name}</a>`);
+            $(id).html(`<a href="/${respuesta.response}">${name}</a>`);
             console.log(respuesta);
         },
         error: function(error) {
