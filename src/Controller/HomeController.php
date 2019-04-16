@@ -80,4 +80,31 @@ class HomeController extends AbstractController
         ));
         return $response;
     }
+     /**
+     * @Route("/home/archived_file", name="archived-file")
+     */
+    public function archivedFile(Request $request, DSpace2OJSService $csv2xml)
+    {
+
+        $data = $request->query->get('data');
+        $doctrine = $this->getDoctrine();
+        $em = $doctrine->getManager();
+        $file_repo = $em->getRepository(File::class);
+        $file = $file_repo->findOneBy(array('path' => $data));
+        if ($file) {
+             $file->setArchived( !$file->getArchived());
+            $em->persist($file);
+            $em->flush();
+        }
+        $encoders = array(new JsonEncoder());
+        $normalizers = array(new ObjectNormalizer());
+        $serializer = new Serializer($normalizers, $encoders);
+        $response = new JsonResponse();
+        $response->setStatusCode(200);
+        $response->setData(array(
+
+            'response' => true
+        ));
+        return $response;
+    }
 }
