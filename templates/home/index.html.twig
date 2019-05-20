@@ -5,11 +5,17 @@
 {% block body %}
 
 
-<div class="example-wrapper">
-    <h1>Submit Csv file ✅</h1>
-    {{form_start(form)}}
-    {{form_widget(form)}}
-    {{form_end(form)}}
-    
-</div>
+    <div class=" container">
+        <h1>Submit Csv file ✅</h1>
+        {{form_start(form)}}
+        {{form_widget(form)}}
+        {{form_end(form)}}
+
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+
+
+    <script src="{{ asset('js/type_file.js') }}">
 {% endblock %}

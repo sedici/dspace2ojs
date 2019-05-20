@@ -1,0 +1,31 @@
+<!-- Navigation -->
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img alt="" src="http://placehold.it/150x50?text=Logo">
+        </a>
+        <button aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbarResponsive" data-toggle="collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item {{ app.request.get('_route') == 'my_files' ? 'active' }}">
+                    <a class="nav-link" href="{{ path('my_files') }}">My files
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ app.request.get('_route') == 'home' ? 'active' }}">
+                    <a class="nav-link" href="{{ path('home') }}">Load file</a>
+                </li>
+                <li class="nav-item {{ app.request.get('_route') == 'user_register' ? 'active' }}">
+                    <a class="nav-link" href="{{ path('user_register') }}">Register user</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="{{ path('app_logout') }}"><span class="glyphicon glyphicon-log-out"></span>Log out</a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
