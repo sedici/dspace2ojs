@@ -188,8 +188,8 @@ class OJSXmlWriter {
         "primary_contact"=>"false",
         "user_group_ref"=>$this->default_authors_group)
       );
-      $author_node->appendChild( $this->createElement("firstname",array(),$authors));
-      $author_node->appendChild( $this->createElement("lastname",array()," "));
+      $author_node->appendChild( $this->createElement("givenname",array(),$authors));
+      $author_node->appendChild( $this->createElement("familyname",array()," "));
       $author_node->appendChild( $this->createElement("email",array(),"mail@fake.com"));
       $authors_node->appendChild($author_node);
     } else { //regular list of people
